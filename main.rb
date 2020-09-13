@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 COLORS = {
+  -1 => "\e[48;5;46m", # lime
   2 => "\e[48;5;88m", # webmaroon
   4 => "\e[48;5;90m", # webpurple
   8 => "\e[48;5;72m", # seagreen
@@ -66,13 +67,19 @@ end
 
 def draw_row(row)
   print '|'
-  row.each { |cell| printf "%s     \e[0m|", COLORS[cell] }
+  row.each { |cell| printf "%s     \e[0m|", color(cell) }
   print "\n|"
-  row.each { |cell| printf "%s%4s \e[0m|", COLORS[cell], cell }
+  row.each { |cell| printf "%s%4s \e[0m|", color(cell), cell&.abs }
   print "\n|"
-  row.each { |cell| printf "%s     \e[0m|", COLORS[cell] }
+  row.each { |cell| printf "%s     \e[0m|", color(cell) }
   puts
   puts '+-----' * SIZE + '+'
+end
+
+def color(value)
+  return '' if value.nil?
+
+  value > 0 ? COLORS[value] : COLORS[-1]
 end
 
 def read_keyboard
@@ -89,6 +96,7 @@ def make_all_moves(key)
       (0...SIZE).each do |b|
         act_on_key(a, b, key)
         draw
+        sleep 0.01
       end
     end
   end
