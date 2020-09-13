@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 COLORS = {
-  1 => "\e[48;5;86m", # turquoise
   2 => "\e[48;5;88m", # webmaroon
   4 => "\e[48;5;90m", # webpurple
   8 => "\e[48;5;72m", # seagreen
@@ -11,7 +10,7 @@ COLORS = {
   128 => "\e[48;5;106m", # olivedrab
   256 => "\e[48;5;109m", # cadetblue
   512 => "\e[48;5;111m", # cornflower
-  1024 => "\e[48;5;115m", # mediumaquamarine
+  1024 => "\e[48;5;39m", # dodgerblue
   2048 => "\e[48;5;118m" # lawngreen
 }.freeze
 
