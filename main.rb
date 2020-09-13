@@ -19,6 +19,7 @@ SIZE = 4
 BOARD = Array.new(SIZE) { Array.new(SIZE) }
 
 def main
+  printf("\033[2J"); # Clear screen.
   @score = 0
   setup_board
 
@@ -54,7 +55,6 @@ def add_at_random_pos(value)
 end
 
 def draw
-  printf("\033[2J"); # Clear screen.
   printf("\033[0;0H"); # Set cursor at top left.
   puts '+-----' * SIZE + '+  ' + @score.to_s
   BOARD.each do |row|
