@@ -19,6 +19,7 @@ BOARD = Array.new(SIZE) { Array.new(SIZE) }
 
 def main
   printf("\033[2J"); # Clear screen.
+  printf("\033[?25l"); # Hide cursor.
   @score = 0
   setup_board
 
@@ -34,6 +35,8 @@ def main
     make_all_moves(key)
     break if key == "\u0003" # Ctrl-C
   end
+ensure
+  printf("\033[?25h"); # Show cursor.
 end
 
 def setup_board
