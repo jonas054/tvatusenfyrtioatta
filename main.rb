@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'gosu'
+
 COLORS = {
   -1 => "\e[48;5;46m", # lime
   2 => "\e[48;5;88m", # webmaroon
@@ -18,10 +20,11 @@ COLORS = {
 SIZE = 4
 BOARD = Array.new(SIZE) { Array.new(SIZE) }
 
+@sample = Gosu::Sample.new('Plopp3.ogg')
+
 def main
   printf("\033[2J"); # Clear screen.
   printf("\033[?25l"); # Hide cursor.
-  @score = 0
   setup_board
 
   loop do
@@ -29,10 +32,7 @@ def main
     break unless any_possible_moves?(BOARD)
 
     key = read_keyboard
-    if key == "\e"
-      read_keyboard
-      key = read_keyboard
-    end
+    2.times { key += read_keyboard } if key == "\e" # Escape sequence.
     make_all_moves(key)
     break if key == "\u0003" # Ctrl-C
   end
@@ -41,6 +41,7 @@ ensure
 end
 
 def setup_board
+  @score = 0
   BOARD.each do |row|
     row.each_index { |c| row[c] = nil }
   end
@@ -96,7 +97,7 @@ def make_all_moves(key)
       (0...SIZE).each do |b|
         act_on_key(a, b, key)
         draw
-        sleep 0.01
+        sleep 0.005
       end
     end
   end
@@ -109,28 +110,26 @@ end
 
 def act_on_key(a, b, key)
   case key
-  when 'w', 'A' then move(b, a, [1, 0])
-  when 's', 'B' then move(b, SIZE - 1 - a, [-1, 0])
-  when 'a', 'D' then move(a, b, [0, 1])
-  when 'd', 'C' then move(SIZE - 1 - a, b, [0, -1])
+  when 'w', "\e[A" then move(b, a, [1, 0])
+  when 's', "\e[B" then move(b, SIZE - 1 - a, [-1, 0])
+  when 'a', "\e[D" then move(a, b, [0, 1])
+  when 'd', "\e[C" then move(SIZE - 1 - a, b, [0, -1])
   end
 end
 
 def move(x, y, dir)
   x1 = x + dir.last
   y1 = y + dir.first
-  case BOARD[y][x]
-  when nil
+  if BOARD[y][x].nil?
     @changed = true if BOARD[y1][x1]
     BOARD[y][x] = BOARD[y1][x1]
     BOARD[y1][x1] = nil
-  when BOARD[y1][x1]
-    if BOARD[y][x].positive?
-      BOARD[y][x] *= -2
-      BOARD[y1][x1] = nil
-      @changed = true
-      @score -= BOARD[y][x]
-    end
+  elsif BOARD[y][x] == BOARD[y1][x1] && BOARD[y][x].positive?
+    @sample.play
+    BOARD[y][x] *= -2
+    BOARD[y1][x1] = nil
+    @changed = true
+    @score -= BOARD[y][x]
   end
 end
 
