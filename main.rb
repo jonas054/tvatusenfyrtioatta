@@ -27,7 +27,11 @@ def main
     break unless any_possible_moves?(BOARD)
 
     key = read_keyboard
-    make_all_moves(key.chr)
+    if key == "\e"
+      read_keyboard
+      key = read_keyboard
+    end
+    make_all_moves(key)
     break if key == "\u0003" # Ctrl-C
   end
 end
@@ -95,10 +99,10 @@ end
 
 def act_on_key(a, b, key)
   case key
-  when 'w' then move(b, a, [1, 0])
-  when 's' then move(b, SIZE - 1 - a, [-1, 0])
-  when 'a' then move(a, b, [0, 1])
-  when 'd' then move(SIZE - 1 - a, b, [0, -1])
+  when 'w', 'A' then move(b, a, [1, 0])
+  when 's', 'B' then move(b, SIZE - 1 - a, [-1, 0])
+  when 'a', 'D' then move(a, b, [0, 1])
+  when 'd', 'C' then move(SIZE - 1 - a, b, [0, -1])
   end
 end
 
