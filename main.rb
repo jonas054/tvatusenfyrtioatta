@@ -68,14 +68,16 @@ def draw
 end
 
 def draw_row(row)
-  print '|'
-  row.each { |cell| printf "%s     \e[0m|", color(cell) }
-  print "\n|"
-  row.each { |cell| printf "%s%4s \e[0m|", color(cell), cell&.abs }
-  print "\n|"
-  row.each { |cell| printf "%s     \e[0m|", color(cell) }
-  puts
+  draw_line(row) { '' }
+  draw_line(row) { |cell| cell&.abs }
+  draw_line(row) { '' }
   puts '+-----' * SIZE + '+'
+end
+
+def draw_line(row)
+  print '|'
+  row.each { |cell| printf "%s%4s \e[0m|", color(cell), yield(cell) }
+  puts
 end
 
 def color(value)
