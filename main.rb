@@ -139,13 +139,13 @@ end
 
 def any_possible_moves?(board)
   return true if board.flatten.compact.size < SIZE * SIZE
-  return true if board.any? { |row| any_adjacent_equal?(row) }
+  return true if any_adjacent_equal?(board)
 
-  board.transpose.any? { |row| any_adjacent_equal?(row) }
+  any_adjacent_equal?(board.transpose)
 end
 
-def any_adjacent_equal?(row)
-  row.each_cons(2).any? { |a, b| a == b }
+def any_adjacent_equal?(board)
+  board.any? { |row| row.each_cons(2).any? { |a, b| a == b } }
 end
 
 main if $PROGRAM_NAME == __FILE__
