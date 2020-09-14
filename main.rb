@@ -24,8 +24,8 @@ def main
   @sample = Gosu::Sample.new('Plopp3.ogg')
   @sleep_time = 0.01
 
-  printf("\033[2J"); # Clear screen.
-  printf("\033[?25l"); # Hide cursor.
+  print "\033[2J" # Clear screen.
+  print "\033[?25l" # Hide cursor.
   setup_board
 
   loop do
@@ -38,7 +38,7 @@ def main
     break if key == "\u0003" # Ctrl-C
   end
 ensure
-  printf("\033[?25h"); # Show cursor.
+  print "\033[?25h" # Show cursor.
 end
 
 def setup_board
@@ -60,11 +60,9 @@ def add_at_random_pos(value)
 end
 
 def draw
-  printf("\033[0;0H"); # Set cursor at top left.
+  print "\033[0;0H" # Set cursor at top left.
   puts '+-----' * SIZE + '+  ' + @score.to_s
-  BOARD.each do |row|
-    draw_row(row)
-  end
+  BOARD.each { |row| draw_row(row) }
 end
 
 def draw_row(row)
