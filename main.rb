@@ -61,7 +61,7 @@ end
 
 def draw
   print "\033[0;0H" # Set cursor at top left.
-  puts '+-----' * SIZE + '+  ' + @score.to_s
+  puts '+------' * SIZE + '+  ' + @score.to_s
   BOARD.each { |row| draw_row(row) }
 end
 
@@ -69,12 +69,12 @@ def draw_row(row)
   draw_line(row) { '' }
   draw_line(row) { |cell| cell&.abs }
   draw_line(row) { '' }
-  puts '+-----' * SIZE + '+'
+  puts '+------' * SIZE + '+'
 end
 
 def draw_line(row)
   print '|'
-  row.each { |cell| printf "%s%4s \e[0m|", color(cell), yield(cell) }
+  row.each { |cell| printf "%s%5s \e[0m|", color(cell), yield(cell) }
   puts
 end
 
