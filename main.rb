@@ -3,7 +3,7 @@
 require 'gosu'
 
 COLORS = {
-  -1 => "\e[48;5;46m", # lime
+  -1 => "\e[48;5;228m\e[38;5;0m", # black on bright yellow
   2 => "\e[48;5;88m", # webmaroon
   4 => "\e[48;5;90m", # webpurple
   8 => "\e[48;5;72m", # seagreen
