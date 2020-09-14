@@ -43,11 +43,8 @@ end
 
 def setup_board
   @score = 0
-  BOARD.each do |row|
-    row.each_index { |c| row[c] = nil }
-  end
-  2.times { add_at_random_pos(2) }
-  2.times { add_at_random_pos(4) }
+  BOARD.each { |row| row.each_index { |c| row[c] = nil } }
+  [2, 2, 4, 4].each { |value| add_at_random_pos(value) }
 end
 
 def add_at_random_pos(value)
