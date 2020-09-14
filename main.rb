@@ -20,9 +20,10 @@ COLORS = {
 SIZE = 4
 BOARD = Array.new(SIZE) { Array.new(SIZE) }
 
-@sample = Gosu::Sample.new('Plopp3.ogg')
-
 def main
+  @sample = Gosu::Sample.new('Plopp3.ogg')
+  @sleep_time = 0.01
+
   printf("\033[2J"); # Clear screen.
   printf("\033[?25l"); # Hide cursor.
   setup_board
@@ -97,7 +98,7 @@ def make_all_moves(key)
       (0...SIZE).each do |b|
         act_on_key(a, b, key)
         draw
-        sleep 0.005
+        sleep @sleep_time if @sleep_time
       end
     end
   end
@@ -125,7 +126,7 @@ def move(x, y, dir)
     BOARD[y][x] = BOARD[y1][x1]
     BOARD[y1][x1] = nil
   elsif BOARD[y][x] == BOARD[y1][x1] && BOARD[y][x].positive?
-    @sample.play
+    @sample&.play
     BOARD[y][x] *= -2
     BOARD[y1][x1] = nil
     @changed = true
