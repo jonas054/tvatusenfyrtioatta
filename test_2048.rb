@@ -7,7 +7,8 @@ require './main'
 class Test2048 < Test::Unit::TestCase
   def setup
     srand 1
-    setup_board
+    @main = Main.new
+    @main.setup_board
     $stdout = StringIO.new
   end
 
@@ -151,24 +152,24 @@ class Test2048 < Test::Unit::TestCase
   end
 
   def check_board(key, expected)
-    make_all_moves(key)
+    @main.make_all_moves(key)
     assert_equal expected, BOARD
   end
 
   def test_any_possible_moves?
-    assert any_possible_moves?([[nil, 2, 64, 4],
-                                [8, 128, 4, 8],
-                                [32, 64, 8, 2],
-                                [2, 4, 2, 16]])
-
-    assert any_possible_moves?([[2, 2, 64, 4],
-                                [8, 128, 4, 8],
-                                [32, 64, 8, 2],
-                                [2, 4, 2, 16]])
-
-    assert_false any_possible_moves?([[4, 2, 64, 4],
+    assert @main.any_possible_moves?([[nil, 2, 64, 4],
                                       [8, 128, 4, 8],
                                       [32, 64, 8, 2],
                                       [2, 4, 2, 16]])
+
+    assert @main.any_possible_moves?([[2, 2, 64, 4],
+                                      [8, 128, 4, 8],
+                                      [32, 64, 8, 2],
+                                      [2, 4, 2, 16]])
+
+    assert_false @main.any_possible_moves?([[4, 2, 64, 4],
+                                            [8, 128, 4, 8],
+                                            [32, 64, 8, 2],
+                                            [2, 4, 2, 16]])
   end
 end
