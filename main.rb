@@ -14,23 +14,33 @@ class Main
 
   def main
     @sample = Gosu::Sample.new('Plopp3.ogg')
-    @sleep_time = 0.2 / SIZE / SIZE / SIZE
+    @sleep_time = 0.2 / SIZE ** 3
 
     print "\033[2J" # Clear screen.
     print "\033[?25l" # Hide cursor.
     setup_board
 
+    system('stty raw -echo')
+    @q = Queue.new
+    keyboard_reader = Thread.new do
+      loop do
+        key = $stdin.getc
+        2.times { key += $stdin.getc } if key == "\e" # Escape sequence.
+        @q << key if @q.size < 2
+      end
+    end
+
     loop do
       @screen.draw(@score)
       break unless any_possible_moves?(BOARD)
 
-      key = read_keyboard
-      2.times { key += read_keyboard } if key == "\e" # Escape sequence.
+      key = @q.pop
       make_all_moves(key)
       break if key == "\u0003" # Ctrl-C
     end
   ensure
-    print "\033[?25h" # Show cursor.
+    system('stty -raw echo')
+    keyboard_reader.kill
   end
 
   def setup_board
@@ -46,13 +56,6 @@ class Main
       break if BOARD[pos.last][pos.first].nil?
     end
     BOARD[pos.last][pos.first] = value
-  end
-
-  def read_keyboard
-    system('stty raw -echo')
-    $stdin.getc
-  ensure
-    system('stty -raw echo')
   end
 
   def make_all_moves(key)
