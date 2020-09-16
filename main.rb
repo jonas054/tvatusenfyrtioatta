@@ -9,7 +9,9 @@ class Main
 
   def initialize(size)
     @board = Array.new(size.to_i) { Array.new(size.to_i) }
+    [2, 2, 4, 4].each { |value| add_at_random_pos(value) }
     @screen = Screen.new(@board)
+    @score = 0
   end
 
   def main
@@ -18,7 +20,6 @@ class Main
 
     print "\033[2J" # Clear screen.
     print "\033[?25l" # Hide cursor.
-    setup_board
 
     system('stty raw -echo')
     @q = Queue.new
@@ -35,19 +36,14 @@ class Main
       break unless any_possible_moves?(@board)
 
       key = @q.pop
-      make_all_moves(key)
       break if key == "\u0003" # Ctrl-C
+
+      make_all_moves(key)
     end
   ensure
     print "\r\033[?25h" # Show cursor.
     system('stty -raw echo')
     keyboard_reader.kill
-  end
-
-  def setup_board
-    @score = 0
-    @board.each { |row| row.each_index { |c| row[c] = nil } }
-    [2, 2, 4, 4].each { |value| add_at_random_pos(value) }
   end
 
   def add_at_random_pos(value)
@@ -72,10 +68,8 @@ class Main
       end
     end
 
-    return unless @changed
-
     clean_up
-    add_at_random_pos(rand < 0.5 ? 2 : 4)
+    add_at_random_pos(rand < 0.5 ? 2 : 4) if @changed
   end
 
   def act_on_key(outer_ix, inner_ix, key)

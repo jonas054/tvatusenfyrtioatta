@@ -8,7 +8,6 @@ class Test2048 < Test::Unit::TestCase
   def setup
     srand 1
     @main = Main.new(4)
-    @main.setup_board
     $stdout = StringIO.new
   end
 
