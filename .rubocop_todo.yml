@@ -19,7 +19,7 @@ Metrics/ClassLength:
 # Offense count: 4
 # Configuration parameters: CountComments, CountAsOne, ExcludedMethods.
 Metrics/MethodLength:
-  Max: 15
+  Max: 25
 
 # Offense count: 4
 # Configuration parameters: MinNameLength, AllowNamesEndingInNumbers, AllowedNames, ForbiddenNames.

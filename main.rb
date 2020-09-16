@@ -14,7 +14,7 @@ class Main
 
   def main
     @sample = Gosu::Sample.new('Plopp3.ogg')
-    @sleep_time = 0.2 / SIZE ** 3
+    @sleep_time = 0.2 / SIZE**3
 
     print "\033[2J" # Clear screen.
     print "\033[?25l" # Hide cursor.
@@ -39,6 +39,7 @@ class Main
       break if key == "\u0003" # Ctrl-C
     end
   ensure
+    print "\r\033[?25h" # Show cursor.
     system('stty -raw echo')
     keyboard_reader.kill
   end
