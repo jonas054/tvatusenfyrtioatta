@@ -7,7 +7,7 @@ require './main'
 class Test2048 < Test::Unit::TestCase
   def setup
     srand 1
-    @main = Main.new
+    @main = Main.new(4)
     @main.setup_board
     $stdout = StringIO.new
   end
@@ -20,7 +20,7 @@ class Test2048 < Test::Unit::TestCase
     assert_equal [[2, nil, nil, 4],
                   [nil, nil, nil, 4],
                   [nil, nil, nil, nil],
-                  [nil, 2, nil, nil]], BOARD
+                  [nil, 2, nil, nil]], @main.board
   end
 
   def test_make_all_moves # rubocop:disable Metrics/MethodLength
@@ -153,7 +153,7 @@ class Test2048 < Test::Unit::TestCase
 
   def check_board(key, expected)
     @main.make_all_moves(key)
-    assert_equal expected, BOARD
+    assert_equal expected, @main.board
   end
 
   def test_any_possible_moves?

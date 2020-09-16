@@ -23,7 +23,7 @@ class Screen
 
   def draw(score)
     print "\033[0;0H" # Set cursor at top left.
-    puts '+------' * SIZE + '+  ' + score.to_s
+    puts '+------' * @board.size + '+  ' + score.to_s
     @board.each { |row| draw_row(row) }
   end
 
@@ -31,7 +31,7 @@ class Screen
     draw_line(row) { '' }
     draw_line(row) { |cell| cell&.abs }
     draw_line(row) { '' }
-    puts "\r" + '+------' * SIZE + '+'
+    puts "\r" + '+------' * @board.size + '+'
   end
 
   def draw_line(row)

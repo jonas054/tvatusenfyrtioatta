@@ -3,18 +3,18 @@
 require 'gosu'
 require './screen'
 
-SIZE = 4
-BOARD = Array.new(SIZE) { Array.new(SIZE) }
-
 # Main 2048 class.
 class Main
-  def initialize
-    @screen = Screen.new(BOARD)
+  attr_reader :board
+
+  def initialize(size)
+    @board = Array.new(size.to_i) { Array.new(size.to_i) }
+    @screen = Screen.new(@board)
   end
 
   def main
     @sample = Gosu::Sample.new('Plopp3.ogg')
-    @sleep_time = 0.2 / SIZE**3
+    @sleep_time = 0.2 / @board.size**3
 
     print "\033[2J" # Clear screen.
     print "\033[?25l" # Hide cursor.
@@ -26,13 +26,13 @@ class Main
       loop do
         key = $stdin.getc
         2.times { key += $stdin.getc } if key == "\e" # Escape sequence.
-        @q << key if @q.size < 2
+        @q << key if @q.size < 1
       end
     end
 
     loop do
       @screen.draw(@score)
-      break unless any_possible_moves?(BOARD)
+      break unless any_possible_moves?(@board)
 
       key = @q.pop
       make_all_moves(key)
@@ -46,25 +46,26 @@ class Main
 
   def setup_board
     @score = 0
-    BOARD.each { |row| row.each_index { |c| row[c] = nil } }
+    @board.each { |row| row.each_index { |c| row[c] = nil } }
     [2, 2, 4, 4].each { |value| add_at_random_pos(value) }
   end
 
   def add_at_random_pos(value)
     pos = nil
     loop do
-      pos = [rand(SIZE), rand(SIZE)]
-      break if BOARD[pos.last][pos.first].nil?
+      pos = [rand(@board.size), rand(@board.size)]
+      break if @board[pos.last][pos.first].nil?
     end
-    BOARD[pos.last][pos.first] = value
+    @board[pos.last][pos.first] = value
   end
 
   def make_all_moves(key)
     @changed = false
-    (SIZE - 1).times do
-      (0...(SIZE - 1)).each do |a|
-        (0...SIZE).each do |b|
-          act_on_key(a, b, key)
+    size = @board.size
+    (size - 1).times do
+      (0...(size - 1)).each do |outer_ix|
+        (0...size).each do |inner_ix|
+          act_on_key(outer_ix, inner_ix, key)
           @screen.draw(@score)
           sleep @sleep_time if @sleep_time
         end
@@ -77,40 +78,42 @@ class Main
     add_at_random_pos(rand < 0.5 ? 2 : 4)
   end
 
-  def act_on_key(a, b, key)
+  def act_on_key(outer_ix, inner_ix, key)
+    size = @board.size
+    # rubocop:disable Layout/ExtraSpacing
     case key
-    when 'w', "\e[A" then move(b, a, [1, 0])
-    when 's', "\e[B" then move(b, SIZE - 1 - a, [-1, 0])
-    when 'a', "\e[D" then move(a, b, [0, 1])
-    when 'd', "\e[C" then move(SIZE - 1 - a, b, [0, -1])
+    when 'w', "\e[A" then move(inner_ix,            outer_ix,             0,  1)
+    when 's', "\e[B" then move(inner_ix,            size - 1 - outer_ix,  0, -1)
+    when 'a', "\e[D" then move(outer_ix,            inner_ix,             1,  0)
+    when 'd', "\e[C" then move(size - 1 - outer_ix, inner_ix,            -1,  0)
     end
+    # rubocop:enable Layout/ExtraSpacing
   end
 
-  def move(x, y, dir)
-    x1 = x + dir.last
-    y1 = y + dir.first
-    if BOARD[y][x].nil?
-      @changed = true if BOARD[y1][x1]
-      BOARD[y][x] = BOARD[y1][x1]
-      BOARD[y1][x1] = nil
-    elsif BOARD[y][x] == BOARD[y1][x1] && BOARD[y][x] > 0
+  def move(x, y, dx, dy)
+    x1 = x + dx
+    y1 = y + dy
+    if @board[y][x].nil?
+      @changed = true if @board[y1][x1]
+      @board[y][x] = @board[y1][x1]
+      @board[y1][x1] = nil
+    elsif @board[y][x] == @board[y1][x1] && @board[y][x] > 0
       @sample&.play
-      BOARD[y][x] *= -2
-      BOARD[y1][x1] = nil
+      @score += 2 * @board[y][x]
+      @board[y][x] *= -2
+      @board[y1][x1] = nil
       @changed = true
-      @score -= BOARD[y][x]
     end
   end
 
   def clean_up
-    BOARD.each { |row| row.each_index { |c| row[c] = row[c].abs if row[c] } }
+    @board.each { |row| row.each_index { |c| row[c] = row[c].abs if row[c] } }
   end
 
   def any_possible_moves?(board)
-    return true if board.flatten.compact.size < SIZE * SIZE
-    return true if any_adjacent_equal?(board)
+    return true if board.flatten.compact.size < @board.size**2
 
-    any_adjacent_equal?(board.transpose)
+    any_adjacent_equal?(board) || any_adjacent_equal?(board.transpose)
   end
 
   def any_adjacent_equal?(board)
@@ -118,4 +121,4 @@ class Main
   end
 end
 
-Main.new.main if $PROGRAM_NAME == __FILE__
+Main.new(ARGV.first || 4).main if $PROGRAM_NAME == __FILE__
