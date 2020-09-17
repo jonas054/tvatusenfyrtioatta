@@ -19,7 +19,7 @@ class Test2048 < Test::Unit::TestCase
     assert_equal [[2, nil, nil, 4],
                   [nil, nil, nil, 4],
                   [nil, nil, nil, nil],
-                  [nil, 2, nil, nil]], @main.board
+                  [nil, 2, nil, nil]], @main.board.to_a
   end
 
   def test_make_all_moves # rubocop:disable Metrics/MethodLength
@@ -152,23 +152,23 @@ class Test2048 < Test::Unit::TestCase
 
   def check_board(key, expected)
     @main.make_all_moves(key)
-    assert_equal expected, @main.board
+    assert_equal expected, @main.board.to_a
   end
 
   def test_any_possible_moves?
-    assert @main.any_possible_moves?([[nil, 2, 64, 4],
-                                      [8, 128, 4, 8],
-                                      [32, 64, 8, 2],
-                                      [2, 4, 2, 16]])
-
-    assert @main.any_possible_moves?([[2, 2, 64, 4],
-                                      [8, 128, 4, 8],
-                                      [32, 64, 8, 2],
-                                      [2, 4, 2, 16]])
-
-    assert_false @main.any_possible_moves?([[4, 2, 64, 4],
+    assert @main.board.any_possible_moves?([[nil, 2, 64, 4],
                                             [8, 128, 4, 8],
                                             [32, 64, 8, 2],
                                             [2, 4, 2, 16]])
+
+    assert @main.board.any_possible_moves?([[2, 2, 64, 4],
+                                            [8, 128, 4, 8],
+                                            [32, 64, 8, 2],
+                                            [2, 4, 2, 16]])
+
+    assert_false @main.board.any_possible_moves?([[4, 2, 64, 4],
+                                                  [8, 128, 4, 8],
+                                                  [32, 64, 8, 2],
+                                                  [2, 4, 2, 16]])
   end
 end
