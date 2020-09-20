@@ -1,7 +1,7 @@
 class Board
   extend Forwardable
 
-  def_delegators :@squares, :size, :[], :[]=, :to_a, :each
+  def_delegators :@squares, :size, :to_a, :each
   
   def initialize(size)
     @squares = Array.new(size) { Array.new(size) }
