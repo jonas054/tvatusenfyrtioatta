@@ -5,6 +5,16 @@ require 'gosu'
 require './screen'
 require './board'
 
+Q = Queue.new
+
+def read_keyboard
+  loop do
+    key = $stdin.getc
+    2.times { key += $stdin.getc } if key == "\e" # Escape sequence.
+    Q << key if Q.size < 1
+  end
+end
+
 # Main 2048 class.
 class Main
   attr_reader :board
@@ -23,20 +33,13 @@ class Main
     print "\033[?25l" # Hide cursor.
 
     system('stty raw -echo')
-    @q = Queue.new
-    keyboard_reader = Thread.new do
-      loop do
-        key = $stdin.getc
-        2.times { key += $stdin.getc } if key == "\e" # Escape sequence.
-        @q << key if @q.size < 1
-      end
-    end
+    keyboard_reader = Thread.new { read_keyboard }
 
     loop do
       @screen.draw(@score)
       break unless @board.any_possible_moves?
 
-      key = @q.pop
+      key = Q.pop
       break if key == "\u0003" # Ctrl-C
 
       make_all_moves(key)
@@ -55,7 +58,7 @@ class Main
         (0..last).each do |inner_ix|
           act_on_key(outer_ix, inner_ix, key, last)
           @screen.draw(@score)
-          sleep @sleep_time if @sleep_time
+          sleep(@sleep_time) if @sleep_time
         end
       end
     end
@@ -66,26 +69,17 @@ class Main
 
   def act_on_key(outer_ix, inner_ix, key, last)
     # rubocop:disable Layout/ExtraSpacing
-    case key
-    when 'w', "\e[A" then move(inner_ix,        outer_ix,         0,  1)
-    when 's', "\e[B" then move(inner_ix,        last - outer_ix,  0, -1)
-    when 'a', "\e[D" then move(outer_ix,        inner_ix,         1,  0)
-    when 'd', "\e[C" then move(last - outer_ix, inner_ix,        -1,  0)
-    end
+    points = case key
+             when 'w', "\e[A" then @board.move(inner_ix,        outer_ix,         0+1i)
+             when 's', "\e[B" then @board.move(inner_ix,        last - outer_ix,  0-1i)
+             when 'a', "\e[D" then @board.move(outer_ix,        inner_ix,         1+0i)
+             when 'd', "\e[C" then @board.move(last - outer_ix, inner_ix,        -1+0i)
+             end
     # rubocop:enable Layout/ExtraSpacing
-  end
 
-  def move(x, y, dx, dy)
-    x1 = x + dx
-    y1 = y + dy
-    if @board[y][x].nil?
-      @board[y][x] = @board[y1][x1]
-      @board[y1][x1] = nil
-    elsif @board[y][x] == @board[y1][x1] && @board[y][x] > 0
+    if points && points > 0
+      @score += points
       @sample&.play
-      @score += 2 * @board[y][x]
-      @board[y][x] *= -2
-      @board[y1][x1] = nil
     end
   end
 end

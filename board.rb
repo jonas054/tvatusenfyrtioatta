@@ -8,13 +8,34 @@ class Board
     [2, 2, 4, 4].each { |value| add_at_random_pos(value) }
   end
 
-  def add_at_random_pos(value)
-    pos = nil
-    loop do
-      pos = [rand(size), rand(size)]
-      break if self[pos.last][pos.first].nil?
+  def move(x, y, delta)
+    current = Complex(x, y)
+    other = current + delta
+    if self[current].nil?
+      self[current] = self[other]
+      self[other] = nil
+    elsif self[current] == self[other] && self[current] > 0
+      self[current] *= -2
+      self[other] = nil
+      return -self[current]
     end
-    self[pos.last][pos.first] = value
+    0
+  end
+
+  def [](complex)
+    @squares[complex.imag][complex.real]
+  end
+
+  def []=(complex, value)
+    @squares[complex.imag][complex.real] = value
+  end
+
+  def add_at_random_pos(value)
+    while true
+      pos = Complex(rand(size), rand(size))
+      break if self[pos].nil?
+    end
+    self[pos] = value
   end
 
   def clean_up
@@ -22,9 +43,8 @@ class Board
   end
 
   def any_possible_moves?(squares = @squares)
-    return true if squares.flatten.compact.size < size**2
-
-    any_adjacent_equal?(squares) || any_adjacent_equal?(squares.transpose)
+    !squares.flatten.all? ||
+      [squares, squares.transpose].any? { |s| any_adjacent_equal?(s) }
   end
 
   def any_adjacent_equal?(squares)
