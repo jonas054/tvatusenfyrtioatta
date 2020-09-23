@@ -12,7 +12,7 @@ class Screen
     64 => "\e[48;5;105m", # mediumslateblue
     128 => "\e[48;5;106m", # olivedrab
     256 => "\e[48;5;109m", # cadetblue
-    512 => "\e[48;5;111m", # cornflower
+    512 => "\e[48;5;202m", # orangered
     1024 => "\e[48;5;39m", # dodgerblue
     2048 => "\e[48;5;118m" # lawngreen
   }.freeze
