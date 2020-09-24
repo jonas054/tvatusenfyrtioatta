@@ -11,7 +11,7 @@ def read_keyboard
   loop do
     key = $stdin.getc
     2.times { key += $stdin.getc } if key == "\e" # Escape sequence.
-    Q << key if Q.size < 1
+    Q << key if Q.empty?
   end
 end
 
@@ -56,7 +56,11 @@ class Main
     last.times do
       (0...last).each do |outer_ix|
         (0..last).each do |inner_ix|
-          act_on_key(outer_ix, inner_ix, key, last)
+          points = @board.move_for_key(outer_ix, inner_ix, key)
+          if points > 0
+            @score += points
+            @sample&.play
+          end
           @screen.draw(@score)
           sleep(@sleep_time) if @sleep_time
         end
@@ -65,22 +69,6 @@ class Main
 
     @board.clean_up
     @board.add_at_random_pos(rand < 0.5 ? 2 : 4) if @board.inspect != before
-  end
-
-  def act_on_key(outer_ix, inner_ix, key, last)
-    # rubocop:disable Layout/ExtraSpacing
-    points = case key
-             when 'w', "\e[A" then @board.move(inner_ix,        outer_ix,         0+1i)
-             when 's', "\e[B" then @board.move(inner_ix,        last - outer_ix,  0-1i)
-             when 'a', "\e[D" then @board.move(outer_ix,        inner_ix,         1+0i)
-             when 'd', "\e[C" then @board.move(last - outer_ix, inner_ix,        -1+0i)
-             end
-    # rubocop:enable Layout/ExtraSpacing
-
-    if points && points > 0
-      @score += points
-      @sample&.play
-    end
   end
 end
 
