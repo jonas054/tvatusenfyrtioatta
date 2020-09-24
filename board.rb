@@ -20,6 +20,7 @@ class Board
     when 's', "\e[B" then move(inner_ix,        last - outer_ix, 0 - 1i)
     when 'a', "\e[D" then move(outer_ix,        inner_ix,        1 + 0i)
     when 'd', "\e[C" then move(last - outer_ix, inner_ix,       -1 + 0i)
+    else 0
     end
     # rubocop:enable Layout/ExtraSpacing
   end
