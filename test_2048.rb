@@ -4,10 +4,10 @@ require 'test/unit'
 require './main'
 
 # Test the game
-class Test2048 < Test::Unit::TestCase
+class Test2048 < Test::Unit::TestCase # rubocop:disable Metrics/ClassLength
   def setup
     srand 1
-    @main = Main.new(4)
+    @board = Board.new(4)
     $stdout = StringIO.new
   end
 
@@ -19,10 +19,10 @@ class Test2048 < Test::Unit::TestCase
     assert_equal [[2, nil, nil, 4],
                   [nil, nil, nil, 4],
                   [nil, nil, nil, nil],
-                  [nil, 2, nil, nil]], @main.board.to_a
+                  [nil, 2, nil, nil]], @board.to_a
   end
 
-  def test_make_all_moves # rubocop:disable Metrics/MethodLength
+  def test_make_all_moves # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     _ = nil # rubocop:disable Lint/UnderscorePrefixedVariableName
     check_board 'w', [[2, 2, _, 8],
                       [_, _, _, _],
@@ -151,24 +151,24 @@ class Test2048 < Test::Unit::TestCase
   end
 
   def check_board(key, expected)
-    @main.make_all_moves(key)
-    assert_equal expected, @main.board.to_a
+    @board.make_all_moves(key) {}
+    assert_equal expected, @board.to_a
   end
 
   def test_any_possible_moves?
-    assert @main.board.any_possible_moves?([[nil, 2, 64, 4],
-                                            [8, 128, 4, 8],
-                                            [32, 64, 8, 2],
-                                            [2, 4, 2, 16]])
+    assert @board.any_possible_moves?([[nil, 2, 64, 4],
+                                       [8, 128, 4, 8],
+                                       [32, 64, 8, 2],
+                                       [2, 4, 2, 16]])
 
-    assert @main.board.any_possible_moves?([[2, 2, 64, 4],
-                                            [8, 128, 4, 8],
-                                            [32, 64, 8, 2],
-                                            [2, 4, 2, 16]])
+    assert @board.any_possible_moves?([[2, 2, 64, 4],
+                                       [8, 128, 4, 8],
+                                       [32, 64, 8, 2],
+                                       [2, 4, 2, 16]])
 
-    assert_false @main.board.any_possible_moves?([[4, 2, 64, 4],
-                                                  [8, 128, 4, 8],
-                                                  [32, 64, 8, 2],
-                                                  [2, 4, 2, 16]])
+    assert_false @board.any_possible_moves?([[4, 2, 64, 4],
+                                             [8, 128, 4, 8],
+                                             [32, 64, 8, 2],
+                                             [2, 4, 2, 16]])
   end
 end

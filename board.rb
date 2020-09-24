@@ -12,6 +12,19 @@ class Board
     [2, 2, 4, 4].each { |value| add_at_random_pos(value) }
   end
 
+  def make_all_moves(key)
+    before = inspect
+    last = size - 1
+    last.times do
+      Array(0...last).product(Array(0..last)) do |outer_ix, inner_ix|
+        yield move_for_key(outer_ix, inner_ix, key)
+      end
+    end
+
+    clean_up
+    add_at_random_pos(rand < 0.5 ? 2 : 4) if inspect != before
+  end
+
   def move_for_key(outer_ix, inner_ix, key)
     last = size - 1
     # rubocop:disable Layout/ExtraSpacing
@@ -57,7 +70,7 @@ class Board
   end
 
   def clean_up
-    each { |row| row.each_index { |c| row[c] = row[c].abs if row[c] } }
+    each { |row| row.each_index { |c| row[c] = row[c]&.abs } }
   end
 
   def any_possible_moves?(squares = @squares)

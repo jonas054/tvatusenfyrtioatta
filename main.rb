@@ -29,9 +29,6 @@ class Main
     @sample = Gosu::Sample.new('Plopp3.ogg')
     @sleep_time = 0.2 / @board.size**3
 
-    print "\033[2J" # Clear screen.
-    print "\033[?25l" # Hide cursor.
-
     system('stty raw -echo')
     keyboard_reader = Thread.new { read_keyboard }
 
@@ -42,33 +39,19 @@ class Main
       key = Q.pop
       break if key == "\u0003" # Ctrl-C
 
-      make_all_moves(key)
-    end
-  ensure
-    print "\r\033[?25h" # Show cursor.
-    system('stty -raw echo')
-    keyboard_reader.kill
-  end
-
-  def make_all_moves(key)
-    before = @board.inspect
-    last = @board.size - 1
-    last.times do
-      (0...last).each do |outer_ix|
-        (0..last).each do |inner_ix|
-          points = @board.move_for_key(outer_ix, inner_ix, key)
-          if points > 0
-            @score += points
-            @sample&.play
-          end
-          @screen.draw(@score)
-          sleep(@sleep_time) if @sleep_time
+      @board.make_all_moves(key) do |points|
+        if points > 0
+          @score += points
+          @sample.play
         end
+        @screen.draw(@score)
+        sleep(@sleep_time) if @sleep_time
       end
     end
-
-    @board.clean_up
-    @board.add_at_random_pos(rand < 0.5 ? 2 : 4) if @board.inspect != before
+  ensure
+    @screen.finish
+    system('stty -raw echo')
+    keyboard_reader.kill
   end
 end
 

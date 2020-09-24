@@ -3,6 +3,12 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   TargetRubyVersion: 2.4
 
+Style/NumericPredicate:
+  EnforcedStyle: comparison
+
+Style/FormatStringToken:
+  EnforcedStyle: unannotated
+
 Layout/EmptyLinesAroundAttributeAccessor:
    Enabled: true
 
@@ -53,4 +59,3 @@ Style/RedundantRegexpEscape:
 
 Style/SlicingWithRange:
   Enabled: true
-  

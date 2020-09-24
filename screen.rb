@@ -19,6 +19,12 @@ class Screen
 
   def initialize(board)
     @board = board
+    print "\033[2J" # Clear screen.
+    print "\033[?25l" # Hide cursor.
+  end
+
+  def finish
+    print "\r\033[?25h" # Show cursor.
   end
 
   def draw(score)
