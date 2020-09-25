@@ -155,7 +155,7 @@ class Test2048 < Test::Unit::TestCase # rubocop:disable Metrics/ClassLength
     assert_equal expected, @board.to_a
   end
 
-  def test_any_possible_moves?
+  def test_any_possible_moves? # rubocop:disable Metrics/MethodLength
     assert @board.any_possible_moves?([[nil, 2, 64, 4],
                                        [8, 128, 4, 8],
                                        [32, 64, 8, 2],

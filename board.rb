@@ -17,7 +17,7 @@ class Board
     last = size - 1
     last.times do
       Array(0...last).product(Array(0..last)) do |outer_ix, inner_ix|
-        yield move_for_key(outer_ix, inner_ix, key)
+        yield move_for_key(outer_ix, inner_ix, key) || 0
       end
     end
 
@@ -33,7 +33,6 @@ class Board
     when 's', "\e[B" then move(inner_ix,        last - outer_ix, 0 - 1i)
     when 'a', "\e[D" then move(outer_ix,        inner_ix,        1 + 0i)
     when 'd', "\e[C" then move(last - outer_ix, inner_ix,       -1 + 0i)
-    else 0
     end
     # rubocop:enable Layout/ExtraSpacing
   end
@@ -44,12 +43,11 @@ class Board
     if self[current].nil?
       self[current] = self[other]
       self[other] = nil
-    elsif self[current] == self[other] && self[current] > 0
+    elsif self[current] == self[other]
       self[current] *= -2
       self[other] = nil
-      return -self[current]
+      -self[current]
     end
-    0
   end
 
   def [](complex)

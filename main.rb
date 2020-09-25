@@ -32,6 +32,14 @@ class Main
     system('stty raw -echo')
     keyboard_reader = Thread.new { read_keyboard }
 
+    main_loop
+  ensure
+    @screen.finish
+    system('stty -raw echo')
+    keyboard_reader.kill
+  end
+
+  def main_loop
     loop do
       @screen.draw(@score)
       break unless @board.any_possible_moves?
@@ -39,19 +47,19 @@ class Main
       key = Q.pop
       break if key == "\u0003" # Ctrl-C
 
-      @board.make_all_moves(key) do |points|
-        if points > 0
-          @score += points
-          @sample.play
-        end
-        @screen.draw(@score)
-        sleep(@sleep_time) if @sleep_time
-      end
+      make_all_moves(key)
     end
-  ensure
-    @screen.finish
-    system('stty -raw echo')
-    keyboard_reader.kill
+  end
+
+  def make_all_moves(key)
+    @board.make_all_moves(key) do |points|
+      if points > 0
+        @score += points
+        @sample.play
+      end
+      @screen.draw(@score)
+      sleep(@sleep_time)
+    end
   end
 end
 
