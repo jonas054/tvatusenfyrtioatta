@@ -35,14 +35,14 @@ class Screen
 
   def draw_row(row)
     draw_line(row) { '' }
-    draw_line(row) { |cell| cell&.abs }
+    draw_line(row) { |cell| cell ? cell.abs.to_s.center(5) : '' }
     draw_line(row) { '' }
     puts "\r" + '+------' * @board.size + '+'
   end
 
   def draw_line(row)
     print "\r|"
-    row.each { |cell| printf "%s%5s \e[0m|", color(cell), yield(cell) }
+    row.each { |cell| printf "%s %5s\e[0m|", color(cell), yield(cell) }
     puts
   end
 
