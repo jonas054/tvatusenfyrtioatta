@@ -19,16 +19,15 @@ end
 class Main
   attr_reader :board
 
-  def initialize(size)
+  def initialize(size, sleep_time, sample)
     @board = Board.new(size.to_i)
     @screen = Screen.new(@board)
     @score = 0
+    @sample = sample
+    @sleep_time = sleep_time / @board.size**3
   end
 
   def main
-    @sample = Gosu::Sample.new('Plopp3.ogg')
-    @sleep_time = 0.2 / @board.size**3
-
     system('stty raw -echo')
     keyboard_reader = Thread.new { read_keyboard }
 
@@ -63,4 +62,6 @@ class Main
   end
 end
 
-Main.new(ARGV.first || 4).main if $PROGRAM_NAME == __FILE__
+if $PROGRAM_NAME == __FILE__
+  Main.new(ARGV.first || 4, 0.2, Gosu::Sample.new('Plopp3.ogg')).main
+end
