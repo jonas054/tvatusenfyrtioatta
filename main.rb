@@ -7,14 +7,6 @@ require './board'
 
 Q = Queue.new
 
-def read_keyboard
-  loop do
-    key = $stdin.getc
-    2.times { key += $stdin.getc } if key == "\e" # Escape sequence.
-    Q << key if Q.empty?
-  end
-end
-
 # Main 2048 class.
 class Main
   attr_reader :board
@@ -36,6 +28,14 @@ class Main
     @screen.finish
     system('stty -raw echo')
     keyboard_reader.kill
+  end
+
+  def read_keyboard
+    loop do
+      key = $stdin.getc
+      2.times { key += $stdin.getc } if key == "\e" # Escape sequence.
+      Q << key if Q.empty?
+    end
   end
 
   def main_loop
