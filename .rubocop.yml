@@ -12,3 +12,6 @@ Style/NumericPredicate:
 
 Style/FormatStringToken:
   EnforcedStyle: unannotated
+
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
