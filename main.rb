@@ -147,7 +147,7 @@ class Main
     @screen = Screen.new(@board)
     @score = 0
     @sample = sample
-    @sleep_time = sleep_time / @board.size**3
+    @sleep_time = sleep_time / @board.size**3 # rubocop:disable Lint/AmbiguousOperatorPrecedence
   end
 
   def main

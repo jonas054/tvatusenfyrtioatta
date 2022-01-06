@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'ostruct'
+require 'stringio'
 require 'test/unit'
 require './main'
 
